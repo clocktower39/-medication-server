@@ -32,20 +32,40 @@ var corsOptions = {
 }
 
 let Prescriber = mongoose.model('Prescriber', {
-    firstName: String,
-    lastName: String,
-    phoneNumber: String,
-    faxNumber: String,
-    npiNumber: Number,
-    deaNumber: String,
-    practiceName: String,
-    address1: String,
-    address2: String,
-    city: String,
-    state: String,
-    zip: Number,
-    country: String,
+    firstName: { type: String, required: true},
+    lastName: { type: String, required: true},
+    phoneNumber: { type: Number, required: true},
+    faxNumber: { type: Number },
+    npiNumber: { type: Number, required: true, index: { unique: true } },
+    deaNumber: { type: String, required: true, index: { unique: true } },
+    practiceName: { type: String, required: true},
+    address1: { type: String, required: true},
+    address2: { type: String },
+    city: { type: String, required: true},
+    state: { type: String, required: true},
+    zip: { type: Number, required: true},
+    country: { type: String, required: true},
 });
+
+app.post('/prescriberEnroll', (req, res) => {
+  let prescriber = new Prescriber(req.body);
+  
+  let savePrescriber = () => {
+    prescriber.save((err)=>{
+          if(err){
+            console.log(err);
+            res.send({error: {err}});
+          }
+          else{
+              res.send({
+                  status: 'success',
+                  prescriber
+              })
+          }
+      });
+  }
+  savePrescriber();
+})
 
 mongoose.connect(dbUrl, 
     {
