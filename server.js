@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const prescriberRoutes = require('./routes/prescriberRoutes');
 const patientRoutes = require('./routes/patientRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 require('dotenv').config();
 const dbUrl = process.env.DBURL;
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
 app.use('/', prescriberRoutes);
 app.use('/', patientRoutes);
+app.use('/', userRoutes);
 
 mongoose.connect(dbUrl, 
     {
