@@ -5,6 +5,7 @@ const prescriberSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     phoneNumber: { type: Number, required: true },
     faxNumber: { type: Number },
+    email: { type: String },
     npiNumber: { type: Number, required: true, index: { unique: true } },
     deaNumber: { type: String, required: true, index: { unique: true } },
     practiceName: { type: String, required: true },

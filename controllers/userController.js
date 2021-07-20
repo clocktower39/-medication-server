@@ -35,7 +35,6 @@ const login_user = (req, res) => {
                         authenticated: false,
                     })
                 }
-                //if the password does not match and previous session was not authenticated, do not authenticate
                 if(isMatch){
                     res.send({
                         authenticated: true,
