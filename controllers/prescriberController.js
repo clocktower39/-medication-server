@@ -20,7 +20,15 @@ const enroll_prescriber = (req, res) => {
 }
 
 const search_prescribers = (req, res) => {
-    Prescriber.find(req.body, function(err, data) {
+
+    const regexBody = req.body;
+    for(const key in regexBody){
+        if(isNaN(Number(regexBody[key]))){
+            regexBody[key] = new RegExp(regexBody[key],'i');
+        }
+    }
+
+    Prescriber.find(regexBody, function(err, data) {
         if (err) throw err;
         res.send(data)
     });

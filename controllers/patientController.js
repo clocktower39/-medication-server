@@ -21,7 +21,15 @@ const enroll_patient = (req, res) => {
   }
 
   const search_patients = (req, res) => {
-      Patient.find(req.body, function(err, data) {
+
+    const regexBody = req.body;
+    for(const key in regexBody){
+        if(isNaN(Number(regexBody[key]))){
+            regexBody[key] = new RegExp(regexBody[key],'i');
+        }
+    }
+
+      Patient.find(regexBody, function(err, data) {
           if (err) throw err;
           res.send(data)
       });
