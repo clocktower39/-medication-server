@@ -19,6 +19,14 @@ const enroll_prescriber = (req, res) => {
     savePrescriber();
 }
 
+const search_prescribers = (req, res) => {
+    Prescriber.find(req.body, function(err, data) {
+        if (err) throw err;
+        res.send(data)
+    });
+}
+
 module.exports = {
     enroll_prescriber,
+    search_prescribers,
 }
