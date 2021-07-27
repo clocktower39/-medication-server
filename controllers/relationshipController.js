@@ -46,10 +46,21 @@ const manage_relationship = (req, res) => {
 }
 
 const get_relationships = (req, res) => {
-    Relationship.find(req.params, function (err, data) {
-        if (err) throw err;
-        res.send(data)
-    });
+    if(req.params.type === 'patient'){
+        Relationship.find({patientId: req.params._id}, function (err, data) {
+            if (err) throw err;
+            res.send(data)
+        });
+    }
+    else if(req.params.type === 'prescriber'){
+        Relationship.find({prescriberId: req.params._id}, function (err, data) {
+            if (err) throw err;
+            res.send(data)
+        });
+    }
+    else {
+        res.send('Invalid request')
+    }
 }
 
 module.exports = {
