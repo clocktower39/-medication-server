@@ -11,10 +11,6 @@ const patientSchema = new mongoose.Schema({
   state: { type: String, required: true },
   zip: { type: Number, required: true },
   country: { type: String, required: true },
-  prescribers: { 
-    active: { type: Array, required: true },
-    removedFromCare: { type: Array, required: true }
-  }
 })
 
 const Patient = mongoose.model('Patient', patientSchema);

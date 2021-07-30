@@ -15,10 +15,6 @@ const prescriberSchema = new mongoose.Schema({
     state: { type: String, required: true },
     zip: { type: Number, required: true },
     country: { type: String, required: true} ,
-    patients: { 
-      active: { type: Array, required: true },
-      noLongerTreating: { type: Array, required: true }
-    }
 })
 
 const Prescriber = mongoose.model('Prescriber', prescriberSchema);
