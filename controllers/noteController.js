@@ -21,7 +21,7 @@ const submit_note = (req, res) => {
 }
 
 const get_notes = (req, res) => {
-    Note.find(req.params.accountId, function (err, data) {
+    Note.find({ accountId: req.params.accountId } , function (err, data) {
         if (err) throw err;
         res.send(data)
     });
