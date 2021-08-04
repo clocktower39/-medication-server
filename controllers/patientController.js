@@ -42,8 +42,22 @@ const search_patients = (req, res) => {
     });
 }
 
+const update_patient_account = (req, res) => {
+    const filter = req.body.filter;
+    const update = req.body.update;
+    Patient.findOneAndUpdate(filter, update, {
+        new: true
+    }, (err, doc) => {
+        if(err){
+            console.log(err);
+        }
+        res.send(doc);
+    });
+}
+
 module.exports = {
     enroll_patient,
     search_patients,
     get_patient_info,
+    update_patient_account,
 }
