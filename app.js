@@ -25,6 +25,7 @@ app.use(cors())
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
+mongoose.set('useFindAndModify', false);
 app.use('/', prescriberRoutes);
 app.use('/', patientRoutes);
 app.use('/', userRoutes);
