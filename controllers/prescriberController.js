@@ -44,7 +44,7 @@ const search_prescribers = (req, res) => {
 const update_prescriber_account = (req, res) => {
     const filter = req.body.filter;
     const update = req.body.update;
-    Patient.findOneAndUpdate(filter, update, {
+    Prescriber.findOneAndUpdate(filter, update, {
         new: true
     }, (err, doc) => {
         if(err){
