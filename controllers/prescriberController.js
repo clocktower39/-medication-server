@@ -41,8 +41,22 @@ const search_prescribers = (req, res) => {
     });
 }
 
+const update_prescriber_account = (req, res) => {
+    const filter = req.body.filter;
+    const update = req.body.update;
+    Patient.findOneAndUpdate(filter, update, {
+        new: true
+    }, (err, doc) => {
+        if(err){
+            console.log(err);
+        }
+        res.send(doc);
+    });
+}
+
 module.exports = {
     enroll_prescriber,
     search_prescribers,
     get_prescriber_info,
+    update_prescriber_account,
 }
