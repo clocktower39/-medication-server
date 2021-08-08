@@ -24,7 +24,7 @@ const manage_relationship = (req, res) => {
                     }
                     else {
                         let relationship = new Relationship(req.body);
-
+                        relationship.date = new Date();
                         relationship.save((err) => {
                             if (err) {
                                 console.log(err);
