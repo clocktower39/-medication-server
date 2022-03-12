@@ -27,7 +27,15 @@ const get_notes = (req, res) => {
     });
 }
 
+const agent_notes = (req, res) => {
+    Note.find({ createdBy: req.body.agentUsername } , function (err, data) {
+        if (err) throw err;
+        res.send(data)
+    });
+}
+
 module.exports = {
     submit_note,
     get_notes,
+    agent_notes,
 }

@@ -51,6 +51,29 @@ const login_user = (req, res) => {
   });
 };
 
+const agent_info = (req, res) => {
+  User.findOne({ _id: req.body._id }, function (err, agent) {
+    if (err) throw err;
+    if (!agent) {
+      res.send({
+        error: { _id: "Agent not found" },
+      });
+    }
+    const filteredAgentData = ({ username, firstName, lastName, email, role, supervisor, projects }) => ({
+      username,
+      firstName,
+      lastName,
+      email,
+      role,
+      supervisor,
+      projects,
+    });
+    res.send({
+      agent: filteredAgentData(agent),
+    });
+  });
+};
+
 const checkAuthLoginToken = (req, res) => {
   res.send("Authorized");
 };
@@ -58,5 +81,6 @@ const checkAuthLoginToken = (req, res) => {
 module.exports = {
   enroll_user,
   login_user,
+  agent_info,
   checkAuthLoginToken,
 };
