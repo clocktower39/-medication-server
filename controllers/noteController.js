@@ -28,7 +28,7 @@ const get_notes = (req, res) => {
 }
 
 const agent_notes = (req, res) => {
-    Note.find({ createdBy: req.body.agentUsername } , function (err, data) {
+    Note.find({ "createdBy.accountId": req.body.accountId } , function (err, data) {
         if (err) throw err;
         res.send(data)
     });

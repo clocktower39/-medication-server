@@ -5,7 +5,7 @@ const noteSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   note: { type: String, required: true },
   noteType: { type: String, required: true },
-  createdBy: { type: String, required: true },
+  createdBy: { username: { type: String, required: true }, accountId: { type: String, required: true } },
 })
 
 const Note = mongoose.model('Note', noteSchema);
