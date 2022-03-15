@@ -5,7 +5,10 @@ const labSchema = new mongoose.Schema({
   timestamp: { type: Date, required: true },
   bloodDrawDate: { type: String, required: true },
   anc: { type: Number, required: true },
-  createdBy: { type: String, required: true },
+  createdBy: { 
+    username: { type: String, required: true },
+    accountId: { type: String, required: true }
+   },
 })
 
 const Lab = mongoose.model('Lab', labSchema);
