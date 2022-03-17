@@ -59,7 +59,15 @@ const agent_info = (req, res) => {
         error: { _id: "Agent not found" },
       });
     }
-    const filteredAgentData = ({ username, firstName, lastName, email, role, supervisor, projects }) => ({
+    const filteredAgentData = ({
+      username,
+      firstName,
+      lastName,
+      email,
+      role,
+      supervisor,
+      projects,
+    }) => ({
       username,
       firstName,
       lastName,
@@ -74,6 +82,32 @@ const agent_info = (req, res) => {
   });
 };
 
+const agent_search = (req, res) => {
+  const regexBody = req.body;
+  for (const key in regexBody) {
+    if (isNaN(Number(regexBody[key]))) {
+      regexBody[key] = new RegExp(regexBody[key], "i");
+    }
+  }
+
+  User.find(regexBody, function (err, data) {
+    if (err) throw err;
+    const filtered = data.map(
+      ({ _id, username, firstName, lastName, email, role, supervisor, projects }) => ({
+        _id,
+        username,
+        firstName,
+        lastName,
+        email,
+        role,
+        supervisor,
+        projects,
+      })
+    );
+    res.send(filtered);
+  });
+};
+
 const checkAuthLoginToken = (req, res) => {
   res.send("Authorized");
 };
@@ -83,4 +117,5 @@ module.exports = {
   login_user,
   agent_info,
   checkAuthLoginToken,
+  agent_search,
 };

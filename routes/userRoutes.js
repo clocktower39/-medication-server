@@ -8,5 +8,6 @@ router.get('/checkAuthToken', auth, userController.checkAuthLoginToken);
 router.post('/login', userController.login_user);
 router.post('/enroll', userController.enroll_user);
 router.post('/agentInfo', userController.agent_info);
+router.post('/agentSearch', userController.agent_search);
 
 module.exports = router;

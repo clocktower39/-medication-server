@@ -26,7 +26,7 @@ const get_prescriber_info = (req, res) => {
     });
 }
 
-const search_prescribers = (req, res) => {
+const prescriberSearch = (req, res) => {
 
     const regexBody = req.body;
     for(const key in regexBody){
@@ -56,7 +56,7 @@ const update_prescriber_account = (req, res) => {
 
 module.exports = {
     enroll_prescriber,
-    search_prescribers,
+    prescriberSearch,
     get_prescriber_info,
     update_prescriber_account,
 }

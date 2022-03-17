@@ -27,7 +27,7 @@ const get_patient_info = (req, res) => {
     });
 }
 
-const search_patients = (req, res) => {
+const patient_search = (req, res) => {
 
     const regexBody = req.body;
     for (const key in regexBody) {
@@ -57,7 +57,7 @@ const update_patient_account = (req, res) => {
 
 module.exports = {
     enroll_patient,
-    search_patients,
+    patient_search,
     get_patient_info,
     update_patient_account,
 }
