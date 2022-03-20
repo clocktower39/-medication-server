@@ -1,22 +1,32 @@
 const Prescriber = require('../models/prescriber');
 
 const enroll_prescriber = (req, res) => {
-    let prescriber = new Prescriber(req.body);
-    let savePrescriber = () => {
-        prescriber.save((err) => {
-            if (err) {
-                console.log(err);
-                res.send({ error: { err } });
+    // check first and last name for accounts that already exist, NPI and DEA are unique and will auto reject enrollment
+    Prescriber.find({ firstName: req.body.firstName, lastName: req.body.lastName}, function(err, data) {
+        if (err) throw err;
+        if(data.length > 0){
+            res.send({ error:'Possible Duplicate Account' })
+        }
+        else {
+            let prescriber = new Prescriber(req.body);
+            let savePrescriber = () => {
+                prescriber.save((err) => {
+                    if (err) {
+                        console.log(err);
+                        res.send({ error: { err } });
+                    }
+                    else {
+                        res.send({
+                            status: 'success',
+                            prescriber
+                        })
+                    }
+                });
             }
-            else {
-                res.send({
-                    status: 'success',
-                    prescriber
-                })
-            }
-        });
-    }
-    savePrescriber();
+            savePrescriber();
+        }
+    });
+
 }
 
 const get_prescriber_info = (req, res) => {
