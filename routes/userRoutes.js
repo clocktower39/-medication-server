@@ -9,5 +9,6 @@ router.post('/login', userController.login_user);
 router.post('/enroll', userController.enroll_user);
 router.post('/agentInfo', userController.agent_info);
 router.post('/agentSearch', userController.agent_search);
+router.post('/changePassword', auth, userController.change_password);
 
 module.exports = router;
