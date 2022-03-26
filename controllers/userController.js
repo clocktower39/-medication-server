@@ -58,6 +58,10 @@ const change_password = (req, res) => {
       res.send({
         error: { username: "Username not found" },
       });
+    } else if(user.username === "GUEST") {
+      res.send({
+        error: {username: "GUEST password can not be changed."}
+      })
     } else {
       user.comparePassword(req.body.currentPassword, function (err, isMatch) {
         if (err) {
