@@ -10,6 +10,7 @@ const userRoutes = require('./routes/userRoutes');
 const relationshipRoutes = require('./routes/relationshipRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const labRoutes = require('./routes/labRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 
 require('dotenv').config();
 const dbUrl = process.env.DBURL;
@@ -32,6 +33,7 @@ app.use('/', userRoutes);
 app.use('/', relationshipRoutes);
 app.use('/', noteRoutes);
 app.use('/', labRoutes);
+app.use('/', serviceRoutes);
 
 mongoose.connect(dbUrl, 
     {
