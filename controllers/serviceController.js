@@ -27,8 +27,8 @@ const get_services = (req, res) => {
     });
 }
 
-const agent_services = (req, res) => {
-    Service.find({ "createdBy.accountId": req.body.accountId } , function (err, data) {
+const get_agent_services = (req, res) => {
+    Service.find({ "createdBy.accountId": req.params.accountId } , function (err, data) {
         if (err) throw err;
         res.send(data)
     });
@@ -37,5 +37,5 @@ const agent_services = (req, res) => {
 module.exports = {
     submit_service,
     get_services,
-    agent_services,
+    get_agent_services,
 }
