@@ -21,14 +21,14 @@ const submit_service = (req, res) => {
 }
 
 const get_services = (req, res) => {
-    Service.find({ "account.id": req.params.accountId } , function (err, data) {
+    Service.find({ "account.id": req.params.id } , function (err, data) {
         if (err) throw err;
         res.send(data)
     });
 }
 
 const get_agent_services = (req, res) => {
-    Service.find({ "createdBy.accountId": req.params.accountId } , function (err, data) {
+    Service.find({ "createdBy.id": req.params.id } , function (err, data) {
         if (err) throw err;
         res.send(data)
     });
