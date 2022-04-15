@@ -58,15 +58,15 @@ const change_password = (req, res) => {
       res.send({
         error: { username: "Username not found" },
       });
-    } else if(user.username === "GUEST") {
+    } else if (user.username === "GUEST") {
       res.send({
-        error: {username: "GUEST password can not be changed."}
+        error: { username: "GUEST password can not be changed." }
       })
     } else {
       user.comparePassword(req.body.currentPassword, function (err, isMatch) {
         if (err) {
           res.send({
-            error: { status: 'Incorrect Current Password'},
+            error: { status: 'Incorrect Current Password' },
           });
         }
         if (isMatch) {
@@ -75,7 +75,7 @@ const change_password = (req, res) => {
             const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
               expiresIn: "30d", // expires in 30 days
             });
-            res.send({accessToken});
+            res.send({ accessToken });
           })
         } else {
           res.send({
@@ -83,6 +83,32 @@ const change_password = (req, res) => {
           });
         }
       });
+    }
+  });
+};
+
+const update_contact_info = (req, res) => {
+  User.findOne({ username: res.locals.user.username }, function (err, user) {
+    if (err) throw err;
+    if (!user) {
+      res.send({
+        error: { username: "Username not found" },
+      });
+    } else if (user.username === "GUEST") {
+      res.send({
+        error: { username: "GUEST info can not be changed." }
+      })
+    } else {
+      user.email = req.body.email;
+      user.firstName = req.body.firstName;
+      user.lastName = req.body.lastName;
+      
+      user.save().then(savedUser => {
+        const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
+          expiresIn: "30d", // expires in 30 days
+        });
+        res.send({ accessToken });
+      })
     }
   });
 };
@@ -96,6 +122,7 @@ const agent_info = (req, res) => {
       });
     }
     const filteredAgentData = ({
+      _id,
       username,
       firstName,
       lastName,
@@ -104,6 +131,7 @@ const agent_info = (req, res) => {
       supervisor,
       projects,
     }) => ({
+      _id,
       username,
       firstName,
       lastName,
@@ -155,4 +183,5 @@ module.exports = {
   checkAuthLoginToken,
   agent_search,
   change_password,
+  update_contact_info,
 };
