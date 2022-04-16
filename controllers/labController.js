@@ -1,28 +1,23 @@
 const Lab = require('../models/lab');
 
-const submit_lab = (req, res) => {
+const submit_lab = (req, res, next) => {
     let lab = new Lab(req.body);
     lab.timestamp = new Date();
     let saveLab = () => {
         lab.save((err) => {
-            if (err) {
-                console.log(err);
-                res.send({ error: {err} });
-            }
-            else {
-                res.send({
-                    status: 'success',
-                    lab
-                })
-            }
+            if (err) return next(err);
+            res.send({
+                status: 'success',
+                lab
+            })
         })
     }
     saveLab();
 }
 
-const get_labs = (req, res) => {
-    Lab.find({ accountId: req.params.accountId } , function (err, data) {
-        if (err) throw err;
+const get_labs = (req, res, next) => {
+    Lab.find({ accountId: req.params.accountId }, function (err, data) {
+        if (err) return next(err);
         res.send(data)
     });
 }

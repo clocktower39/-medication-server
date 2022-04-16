@@ -3,7 +3,7 @@ const Prescriber = require('../models/prescriber');
 const Patient = require('../models/patient');
 const mongoose = require('mongoose');
 
-const manage_relationship = (req, res) => {
+const manage_relationship = (req, res, next) => {
     if(!mongoose.Types.ObjectId.isValid(req.body.prescriberId) || !mongoose.Types.ObjectId.isValid(req.body.patientId)){
         res.send('Invalid ID entered');
     }
@@ -12,7 +12,7 @@ const manage_relationship = (req, res) => {
     }
     else{
         Prescriber.findById(req.body.prescriberId, function(err, data) {
-            if (err) throw err;
+            if (err) return next(err);
             if(data === null){
                 res.send('Prescriber does not exist');
             }
@@ -45,16 +45,16 @@ const manage_relationship = (req, res) => {
     }
 }
 
-const get_relationships = (req, res) => {
+const get_relationships = (req, res, next) => {
     if(req.params.type === 'patient'){
         Relationship.find({patientId: req.params._id}, function (err, data) {
-            if (err) throw err;
+            if (err) return next(err);
             res.send(data)
         });
     }
     else if(req.params.type === 'prescriber'){
         Relationship.find({prescriberId: req.params._id}, function (err, data) {
-            if (err) throw err;
+            if (err) return next(err);
             res.send(data)
         });
     }

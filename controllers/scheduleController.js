@@ -1,15 +1,15 @@
 const Schedule = require('../models/schedule');
 
-const get_user_schedule = (req, res) => {
+const get_user_schedule = (req, res, next) => {
     Schedule.find({ accountId: req.params.accountId } , function (err, data) {
-        if (err) throw err;
+        if (err) return next(err);
         res.send(data)
     });
 }
 
-const get_date_schedule = (req, res) => {
+const get_date_schedule = (req, res, next) => {
     Schedule.find({ accountId: req.params.accountId } , function (err, data) {
-        if (err) throw err;
+        if (err) return next(err);
         const daySchedule = data.history.filter(day => day.date === req.body.date);
         res.send(daySchedule)
     });

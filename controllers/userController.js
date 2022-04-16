@@ -2,32 +2,29 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
-const enroll_user = (req, res) => {
+const enroll_user = (req, res, next) => {
   let user = new User(req.body);
   let saveUser = () => {
     user.save((err) => {
-      if (err) {
-        console.log(err);
-        res.send({ error: { err } });
-      } else {
-        res.send({
-          status: "success",
-          user,
-        });
-      }
+      if (err) return next(err);
+      res.send({
+        status: "success",
+        user,
+      });
     });
   };
   saveUser();
 };
 
-const login_user = (req, res) => {
+const login_user = (req, res, next) => {
   const { username, password } = req.body;
   if (!username || !password) {
     res.send({ error: { message: 'Missing required field(s)', } })
   }
   else {
     User.findOne({ username }, function (err, user) {
-      if (err || !user) {
+      if (err) return next(err);
+      if (!user) {
         res.send({
           authenticated: false,
           error: { username: "Username not found" },
@@ -56,10 +53,11 @@ const login_user = (req, res) => {
   }
 };
 
-const change_password = (req, res) => {
+const change_password = (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   User.findOne({ username: res.locals.user.username }, function (err, user) {
-    if (err || !user) {
+    if (err) return next(err);
+    if (!user) {
       res.send({
         error: { username: "Username not found" },
       });
@@ -97,12 +95,13 @@ const change_password = (req, res) => {
   });
 };
 
-const update_contact_info = (req, res) => {
+const update_contact_info = (req, res, next) => {
   const { email, firstName, lastName } = req.body;
   if (!email || !firstName, !lastName) res.send({ error: { message: 'Missing required field(s)', } })
   else {
     User.findOne({ username: res.locals.user.username }, function (err, user) {
-      if (err || !user) {
+      if (err) return next(err);
+      if (!user) {
         res.send({
           error: { username: "Username not found" },
         });
@@ -126,9 +125,10 @@ const update_contact_info = (req, res) => {
   }
 };
 
-const agent_info = (req, res) => {
+const agent_info = (req, res, next) => {
   User.findOne({ _id: req.body._id }, function (err, agent) {
-    if (err || !agent) {
+    if (err) return next(err);
+    if (!agent) {
       res.send({
         error: { _id: "Agent not found" },
       });
@@ -160,7 +160,7 @@ const agent_info = (req, res) => {
   });
 };
 
-const agent_search = (req, res) => {
+const agent_search = (req, res, next) => {
   const regexBody = req.body;
   for (const key in regexBody) {
     if (isNaN(Number(regexBody[key])) && key !== "_id") {
@@ -169,26 +169,20 @@ const agent_search = (req, res) => {
   }
 
   User.find(regexBody, function (err, data) {
-    if (err) {
-      res.send({
-        error: { err },
-      });
-    }
-    else {
-      const filtered = data.map(
-        ({ _id, username, firstName, lastName, email, role, supervisor, projects }) => ({
-          _id,
-          username,
-          firstName,
-          lastName,
-          email,
-          role,
-          supervisor,
-          projects,
-        })
-      );
-      res.send(filtered);
-    }
+    if (err) return next(err);
+    const filtered = data.map(
+      ({ _id, username, firstName, lastName, email, role, supervisor, projects }) => ({
+        _id,
+        username,
+        firstName,
+        lastName,
+        email,
+        role,
+        supervisor,
+        projects,
+      })
+    );
+    res.send(filtered);
   });
 };
 
