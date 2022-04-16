@@ -21,40 +21,45 @@ const enroll_user = (req, res) => {
 };
 
 const login_user = (req, res) => {
-  User.findOne({ username: req.body.username }, function (err, user) {
-    if (err) throw err;
-    if (!user) {
-      res.send({
-        authenticated: false,
-        error: { username: "Username not found" },
-      });
-    } else {
-      user.comparePassword(req.body.password, function (err, isMatch) {
-        if (err) {
-          res.send({
-            authenticated: false,
-          });
-        }
-        if (isMatch) {
-          const accessToken = jwt.sign(user._doc, ACCESS_TOKEN_SECRET, {
-            expiresIn: "30d", // expires in 30 days
-          });
-          res.send({ accessToken });
-        } else {
-          res.send({
-            authenticated: false,
-            error: { password: "Incorrect Password" },
-          });
-        }
-      });
-    }
-  });
+  const { username, password } = req.body;
+  if (!username || !password) {
+    res.send({ error: { message: 'Missing required field(s)', } })
+  }
+  else {
+    User.findOne({ username }, function (err, user) {
+      if (err || !user) {
+        res.send({
+          authenticated: false,
+          error: { username: "Username not found" },
+        });
+      } else {
+        user.comparePassword(req.body.password, function (err, isMatch) {
+          if (err) {
+            res.send({
+              authenticated: false,
+            });
+          }
+          if (isMatch) {
+            const accessToken = jwt.sign(user._doc, ACCESS_TOKEN_SECRET, {
+              expiresIn: "30d", // expires in 30 days
+            });
+            res.send({ accessToken });
+          } else {
+            res.send({
+              authenticated: false,
+              error: { password: "Incorrect Password" },
+            });
+          }
+        });
+      }
+    });
+  }
 };
 
 const change_password = (req, res) => {
+  const { currentPassword, newPassword } = req.body;
   User.findOne({ username: res.locals.user.username }, function (err, user) {
-    if (err) throw err;
-    if (!user) {
+    if (err || !user) {
       res.send({
         error: { username: "Username not found" },
       });
@@ -63,101 +68,73 @@ const change_password = (req, res) => {
         error: { username: "GUEST password can not be changed." }
       })
     } else {
-      user.comparePassword(req.body.currentPassword, function (err, isMatch) {
-        if (err) {
-          res.send({
-            error: { status: 'Incorrect Current Password' },
-          });
-        }
-        if (isMatch) {
-          user.password = req.body.newPassword;
-          user.save().then(savedUser => {
-            const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
-              expiresIn: "30d", // expires in 30 days
+      if (!currentPassword || !newPassword) {
+        res.send({ error: { message: 'Missing required field(s)', } })
+      }
+      else {
+        user.comparePassword(req.body.currentPassword, function (err, isMatch) {
+          if (err) {
+            res.send({
+              error: { status: 'Incorrect Current Password' },
             });
-            res.send({ accessToken });
-          })
-        } else {
-          res.send({
-            error: { status: "Password change failed." },
-          });
-        }
-      });
+          }
+          if (isMatch) {
+            user.password = req.body.newPassword;
+            user.save().then(savedUser => {
+              const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
+                expiresIn: "30d", // expires in 30 days
+              });
+              res.send({ accessToken });
+            })
+          } else {
+            res.send({
+              error: { status: "Password change failed." },
+            });
+          }
+        });
+      }
     }
   });
 };
 
 const update_contact_info = (req, res) => {
-  User.findOne({ username: res.locals.user.username }, function (err, user) {
-    if (err) throw err;
-    if (!user) {
-      res.send({
-        error: { username: "Username not found" },
-      });
-    } else if (user.username === "GUEST") {
-      res.send({
-        error: { username: "GUEST info can not be changed." }
-      })
-    } else {
-      user.email = req.body.email;
-      user.firstName = req.body.firstName;
-      user.lastName = req.body.lastName;
-      
-      user.save().then(savedUser => {
-        const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
-          expiresIn: "30d", // expires in 30 days
+  const { email, firstName, lastName } = req.body;
+  if (!email || !firstName, !lastName) res.send({ error: { message: 'Missing required field(s)', } })
+  else {
+    User.findOne({ username: res.locals.user.username }, function (err, user) {
+      if (err || !user) {
+        res.send({
+          error: { username: "Username not found" },
         });
-        res.send({ accessToken });
-      })
-    }
-  });
+      } else if (user.username === "GUEST") {
+        res.send({
+          error: { username: "GUEST info can not be changed." }
+        })
+      } else {
+        user.email = req.body.email;
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+
+        user.save().then(savedUser => {
+          const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
+            expiresIn: "30d", // expires in 30 days
+          });
+          res.send({ accessToken });
+        })
+      }
+    });
+  }
 };
 
 const agent_info = (req, res) => {
   User.findOne({ _id: req.body._id }, function (err, agent) {
-    if (err) throw err;
-    if (!agent) {
+    if (err || !agent) {
       res.send({
         error: { _id: "Agent not found" },
       });
     }
-    const filteredAgentData = ({
-      _id,
-      username,
-      firstName,
-      lastName,
-      email,
-      role,
-      supervisor,
-      projects,
-    }) => ({
-      _id,
-      username,
-      firstName,
-      lastName,
-      email,
-      role,
-      supervisor,
-      projects,
-    });
-    res.send({
-      agent: filteredAgentData(agent),
-    });
-  });
-};
-
-const agent_search = (req, res) => {
-  const regexBody = req.body;
-  for (const key in regexBody) {
-    if (isNaN(Number(regexBody[key]))) {
-      regexBody[key] = new RegExp(regexBody[key], "i");
-    }
-  }
-
-  User.find(regexBody, function (err, data) {
-    if (err) throw err;
-    const filtered = data.map(
-      ({ _id, username, firstName, lastName, email, role, supervisor, projects }) => ({
+    else {
+      const filteredAgentData = ({
         _id,
         username,
         firstName,
@@ -166,9 +143,52 @@ const agent_search = (req, res) => {
         role,
         supervisor,
         projects,
-      })
-    );
-    res.send(filtered);
+      }) => ({
+        _id,
+        username,
+        firstName,
+        lastName,
+        email,
+        role,
+        supervisor,
+        projects,
+      });
+      res.send({
+        agent: filteredAgentData(agent),
+      });
+    }
+  });
+};
+
+const agent_search = (req, res) => {
+  const regexBody = req.body;
+  for (const key in regexBody) {
+    if (isNaN(Number(regexBody[key])) && key !== "_id") {
+      regexBody[key] = new RegExp(regexBody[key], "i");
+    }
+  }
+
+  User.find(regexBody, function (err, data) {
+    if (err) {
+      res.send({
+        error: { err },
+      });
+    }
+    else {
+      const filtered = data.map(
+        ({ _id, username, firstName, lastName, email, role, supervisor, projects }) => ({
+          _id,
+          username,
+          firstName,
+          lastName,
+          email,
+          role,
+          supervisor,
+          projects,
+        })
+      );
+      res.send(filtered);
+    }
   });
 };
 

@@ -7,8 +7,8 @@ const router = express.Router();
 router.get('/checkAuthToken', auth, userController.checkAuthLoginToken);
 router.post('/login', userController.login_user);
 router.post('/enroll', userController.enroll_user);
-router.post('/agentInfo', userController.agent_info);
-router.post('/agentSearch', userController.agent_search);
+router.post('/agentInfo', auth, userController.agent_info);
+router.post('/agentSearch', auth, userController.agent_search);
 router.post('/changePassword', auth, userController.change_password);
 router.post('/updateContactInfo', auth, userController.update_contact_info);
 
