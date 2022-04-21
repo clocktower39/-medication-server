@@ -2,7 +2,7 @@ const Service = require('../models/service');
 
 const submit_service = (req, res, next) => {
     let service = new Service(req.body);
-    service.date = new Date();
+    service.timestamp = new Date();
     let saveService = () => {
         service.save((err) => {
             if (err) return next(err);

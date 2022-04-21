@@ -18,39 +18,34 @@ const enroll_user = (req, res, next) => {
 
 const login_user = (req, res, next) => {
   const { username, password } = req.body;
-  if (!username || !password) {
-    res.send({ error: { message: 'Missing required field(s)', } })
-  }
-  else {
-    User.findOne({ username }, function (err, user) {
-      if (err) return next(err);
-      if (!user) {
-        res.send({
-          authenticated: false,
-          error: { username: "Username not found" },
-        });
-      } else {
-        user.comparePassword(req.body.password, function (err, isMatch) {
-          if (err) {
-            res.send({
-              authenticated: false,
-            });
-          }
-          if (isMatch) {
-            const accessToken = jwt.sign(user._doc, ACCESS_TOKEN_SECRET, {
-              expiresIn: "30d", // expires in 30 days
-            });
-            res.send({ accessToken });
-          } else {
-            res.send({
-              authenticated: false,
-              error: { password: "Incorrect Password" },
-            });
-          }
-        });
-      }
-    });
-  }
+  User.findOne({ username }, function (err, user) {
+    if (err) return next(err);
+    if (!user) {
+      res.send({
+        authenticated: false,
+        error: { username: "Username not found" },
+      });
+    } else {
+      user.comparePassword(password, function (err, isMatch) {
+        if (err) {
+          res.send({
+            authenticated: false,
+          });
+        }
+        if (isMatch) {
+          const accessToken = jwt.sign(user._doc, ACCESS_TOKEN_SECRET, {
+            expiresIn: "30d", // expires in 30 days
+          });
+          res.send({ accessToken });
+        } else {
+          res.send({
+            authenticated: false,
+            error: { password: "Incorrect Password" },
+          });
+        }
+      });
+    }
+  });
 };
 
 const change_password = (req, res, next) => {
@@ -66,63 +61,60 @@ const change_password = (req, res, next) => {
         error: { username: "GUEST password can not be changed." }
       })
     } else {
-      if (!currentPassword || !newPassword) {
-        res.send({ error: { message: 'Missing required field(s)', } })
-      }
-      else {
-        user.comparePassword(req.body.currentPassword, function (err, isMatch) {
-          if (err) {
-            res.send({
-              error: { status: 'Incorrect Current Password' },
+      // if (!currentPassword || !newPassword) {
+      //   res.send({ error: { message: 'Missing required field(s)', } })
+      // }
+      // else {
+      user.comparePassword(currentPassword, function (err, isMatch) {
+        if (err) {
+          res.send({
+            error: { status: 'Incorrect Current Password' },
+          });
+        }
+        if (isMatch) {
+          user.password = newPassword;
+          user.save().then(savedUser => {
+            const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
+              expiresIn: "30d", // expires in 30 days
             });
-          }
-          if (isMatch) {
-            user.password = req.body.newPassword;
-            user.save().then(savedUser => {
-              const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
-                expiresIn: "30d", // expires in 30 days
-              });
-              res.send({ accessToken });
-            })
-          } else {
-            res.send({
-              error: { status: "Password change failed." },
-            });
-          }
-        });
-      }
+            res.send({ accessToken });
+          })
+        } else {
+          res.send({
+            error: { status: "Password change failed." },
+          });
+        }
+      });
+      // }
     }
   });
 };
 
 const update_contact_info = (req, res, next) => {
   const { email, firstName, lastName } = req.body;
-  if (!email || !firstName, !lastName) res.send({ error: { message: 'Missing required field(s)', } })
-  else {
-    User.findOne({ username: res.locals.user.username }, function (err, user) {
-      if (err) return next(err);
-      if (!user) {
-        res.send({
-          error: { username: "Username not found" },
-        });
-      } else if (user.username === "GUEST") {
-        res.send({
-          error: { username: "GUEST info can not be changed." }
-        })
-      } else {
-        user.email = req.body.email;
-        user.firstName = req.body.firstName;
-        user.lastName = req.body.lastName;
+  User.findOne({ username: res.locals.user.username }, function (err, user) {
+    if (err) return next(err);
+    if (!user) {
+      res.send({
+        error: { username: "Username not found" },
+      });
+    } else if (user.username === "GUEST") {
+      res.send({
+        error: { username: "GUEST info can not be changed." }
+      })
+    } else {
+      user.email = email;
+      user.firstName = firstName;
+      user.lastName = lastName;
 
-        user.save().then(savedUser => {
-          const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
-            expiresIn: "30d", // expires in 30 days
-          });
-          res.send({ accessToken });
-        })
-      }
-    });
-  }
+      user.save().then(savedUser => {
+        const accessToken = jwt.sign(savedUser._doc, ACCESS_TOKEN_SECRET, {
+          expiresIn: "30d", // expires in 30 days
+        });
+        res.send({ accessToken });
+      })
+    }
+  });
 };
 
 const agent_info = (req, res, next) => {
