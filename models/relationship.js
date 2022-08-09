@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const relationshipSchema = new mongoose.Schema({
-  prescriberId: { type: String, required: true },
-  patientId: { type: String, required: true },
+  prescriber: { type: mongoose.Schema.Types.ObjectId, ref: "Prescriber", required: true },
+  patient: { type: mongoose.Schema.Types.ObjectId, ref: "Patient", required: true },
   action: { type: String, required: true },
   date: { type: Date, required: true },
 })

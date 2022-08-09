@@ -2,6 +2,7 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const auth = require("../middleware/auth");
 const { validate, Joi } = require('express-validation');
+const router = express.Router();
 
 const loginValidate = {
     body: Joi.object({
@@ -50,8 +51,6 @@ const updateUserValidate = {
             .required(),
     }),
 }
-
-const router = express.Router();
 
 router.get('/checkAuthToken', auth, userController.checkAuthLoginToken);
 router.post('/login', validate(loginValidate, {}, {}), userController.login_user);
