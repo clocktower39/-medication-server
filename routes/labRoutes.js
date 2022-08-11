@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get('/labs/:accountId', auth, labController.get_labs);
+router.get('/labs/:id', auth, labController.get_labs);
 router.post('/submitLab', auth, labController.submit_lab);
 
 module.exports = router;

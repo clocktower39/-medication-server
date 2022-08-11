@@ -16,17 +16,21 @@ const submit_note = (req, res, next) => {
 }
 
 const get_notes = (req, res, next) => {
-    Note.find({ "account.id": req.params.id } , function (err, data) {
+    Note.find({ "account.account": req.params.id })
+    .populate('createdBy', '_id username firstName lastName email role')
+    .exec(function (err, data) {
         if (err) return next(err);
         res.send(data)
     });
 }
 
 const agent_notes = (req, res, next) => {
-    Note.find({ "createdBy.id": req.body.id } , function (err, data) {
-        if (err) return next(err);
-        res.send(data)
-    });
+    Note.find({ "createdBy": req.body.id })
+        .populate("account.account", '_id firstName lastName')
+        .exec(function (err, data) {
+            if (err) return next(err);
+            res.send(data)
+        });
 }
 
 module.exports = {

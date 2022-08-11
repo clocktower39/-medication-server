@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
   account: {
-    account: { type: mongoose.Schema.Types.ObjectId, refPath: "type", required: true },
+    account: { type: mongoose.Schema.Types.ObjectId, refPath: "account.type", required: true },
     type: { type: String, required: true },
   },
   timestamp: { type: Date, required: true },

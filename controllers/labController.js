@@ -16,7 +16,9 @@ const submit_lab = (req, res, next) => {
 }
 
 const get_labs = (req, res, next) => {
-    Lab.find({ accountId: req.params.accountId }, function (err, data) {
+    Lab.find({ patient: req.params.id })
+    .populate("createdBy", 'username firstName lastName')
+    .exec(function (err, data) {
         if (err) return next(err);
         res.send(data)
     });

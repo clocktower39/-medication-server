@@ -16,14 +16,18 @@ const submit_service = (req, res, next) => {
 }
 
 const get_services = (req, res, next) => {
-    Service.find({ "account.id": req.params.id }, function (err, data) {
+    Service.find({ "account.account": req.params.id })
+    .populate("createdBy", 'username firstName lastName')
+    .exec(function (err, data) {
         if (err) return next(err);
         res.send(data)
     });
 }
 
 const get_agent_services = (req, res, next) => {
-    Service.find({ "createdBy.id": req.params.id }, function (err, data) {
+    Service.find({ "createdBy": req.params.id })
+    .populate("account.account", 'username firstName lastName')
+    .exec(function (err, data) {
         if (err) return next(err);
         res.send(data)
     });
