@@ -38,7 +38,14 @@ const enrollValidate = {
     }),
 }
 
-router.get('/prescriberProfile/:_id', auth, prescriberController.get_prescriber_info);
+const getPRInfoValidate = {
+    params: Joi.object({
+        _id: Joi.string()
+            .required(),
+    }),
+}
+
+router.get('/prescriberProfile/:_id', validate(getPRInfoValidate, {}, {}), auth, prescriberController.get_prescriber_info);
 router.post('/enrollPrescriber', validate(enrollValidate, {}, {}), auth, prescriberController.enroll_prescriber);
 router.post('/prescriberSearch', auth, prescriberController.prescriberSearch);
 router.post('/updatePrescriber', auth, prescriberController.update_prescriber_account);

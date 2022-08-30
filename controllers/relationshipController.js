@@ -42,14 +42,23 @@ const manage_relationship = (req, res, next) => {if(!req.body.action){
 }
 
 const get_relationships = (req, res, next) => {
-    if(req.params.type === 'patient'){
-        Relationship.find({patient: req.params._id}, function (err, data) {
+    if(!req.params._id){
+        res.send([]);
+    }
+    else if(req.params.type === 'patient'){
+        Relationship.find({patient: req.params._id})
+        .populate("patient", 'username firstName lastName')
+        .populate("prescriber", 'username firstName lastName npiNumber deaNumber')
+        .exec(function (err, data) {
             if (err) return next(err);
             res.send(data)
         });
     }
     else if(req.params.type === 'prescriber'){
-        Relationship.find({prescriber: req.params._id}, function (err, data) {
+        Relationship.find({prescriber: req.params._id})
+        .populate("patient", 'username firstName lastName')
+        .populate("prescriber", 'username firstName lastName npiNumber deaNumber')
+        .exec(function (err, data) {
             if (err) return next(err);
             res.send(data)
         });

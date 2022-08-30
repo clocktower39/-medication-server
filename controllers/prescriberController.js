@@ -30,6 +30,9 @@ const enroll_prescriber = (req, res, next) => {
 }
 
 const get_prescriber_info = (req, res, next) => {
+    if(!req.params._id){
+        res.send([]);
+    }
     Prescriber.find(req.params, function (err, data) {
         if (err) return next(err);
         res.send(data)
