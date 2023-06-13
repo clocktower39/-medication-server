@@ -47,7 +47,7 @@ const get_relationships = (req, res, next) => {
     }
     else if(req.params.type === 'patient'){
         Relationship.find({patient: req.params._id})
-        .populate("patient", 'username firstName lastName')
+        .populate("patient", 'username firstName lastName dateOfBirth zip')
         .populate("prescriber", 'username firstName lastName npiNumber deaNumber')
         .exec(function (err, data) {
             if (err) return next(err);
@@ -56,7 +56,7 @@ const get_relationships = (req, res, next) => {
     }
     else if(req.params.type === 'prescriber'){
         Relationship.find({prescriber: req.params._id})
-        .populate("patient", 'username firstName lastName')
+        .populate("patient", 'username firstName lastName dateOfBirth zip')
         .populate("prescriber", 'username firstName lastName npiNumber deaNumber')
         .exec(function (err, data) {
             if (err) return next(err);

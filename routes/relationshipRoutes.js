@@ -5,9 +5,9 @@ const { validate, Joi } = require('express-validation');
 
 const relationshipValidate = {
     body: Joi.object({
-        prescriberId: Joi.string()
+        prescriber: Joi.string()
             .required(),
-        patientId: Joi.string()
+        patient: Joi.string()
             .required(),
         action: Joi.string()
             .required(),
